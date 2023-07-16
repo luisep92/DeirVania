@@ -1,34 +1,85 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Utils;
 
 public abstract class Enemy : MonoBehaviour
 {
-    //Change angry for a better naming
-    public enum EnemyState { IDLE, PATROL }
-
+    public enum EnemyState { IDLE, PATROL, ATTACKING }
+    
 
     public EnemyState enemyState;
-    protected List<Vector3> wayPoints;
+    protected List<Vector2> waypoints = new();
+    protected Vector2 nextWaypoint;
     protected Rigidbody2D rb;
-    private Player player;
+    protected Player player;
+    protected float speed;
+    protected Animator anim;
 
-    private void Awake()
-    {
-        player = Player.Instance;
-        rb = GetComponent<Rigidbody2D>();
-    }
+    protected float VelX => Mathf.Abs(rb.velocity.x);
+
 
     protected abstract void Idle();
 
     protected abstract void Patrol();
 
-    protected abstract void Move(Vector2 position);
-
     protected abstract void Attack();
+
+    protected abstract void SetWaypoints();
 
     protected virtual void DetectPlayer()
     {
 
     }
+
+
+
+    protected void Awake()
+    {
+        player = Player.Instance;
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        SetWaypoints();
+        nextWaypoint = waypoints[0];
+    }
+
+    protected void Update()
+    {
+        switch (enemyState)
+        {
+            case EnemyState.ATTACKING:
+                Attack();
+                break;
+            case EnemyState.PATROL:
+                Patrol();
+                break;
+            default:
+                Idle();
+                break;
+        }
+    }
+
+    protected Vector2 GetNextWaypoint()
+    {
+        int index = waypoints.IndexOf(nextWaypoint);
+        if (index == waypoints.Count - 1)
+            return waypoints[0];
+        return waypoints[index + 1];
+    }
+
+    public  Direction GetDirection(Vector2 objPosition)
+    {
+        if (objPosition.x < transform.position.x)
+            return Direction.LEFT;
+        return Direction.RIGHT;
+    }
+
+    public void LookAt(Direction dir)
+    {
+        Vector3 aux = transform.localScale;
+        aux.x = (int)dir;
+        transform.localScale = aux;
+    }
+
+   
 }

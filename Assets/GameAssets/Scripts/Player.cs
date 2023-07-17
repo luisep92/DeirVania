@@ -5,9 +5,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    #region SINGLETON
     public static Player Instance;
-    #endregion
 
 
     private void Awake()

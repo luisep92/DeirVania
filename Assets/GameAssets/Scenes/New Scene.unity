@@ -224,16 +224,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2256239239845819162, guid: 76a1ccb2bb8493c42b2a460d5d7de6e8, type: 3}
+      propertyPath: m_Mass
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2256239239845819162, guid: 76a1ccb2bb8493c42b2a460d5d7de6e8, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 6200000, guid: 098efa6122ccc294b86637c3a18fe2d0, type: 2}
-    - target: {fileID: 2425979402129732981, guid: 76a1ccb2bb8493c42b2a460d5d7de6e8, type: 3}
-      propertyPath: enemyState
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2425979402129732981, guid: 76a1ccb2bb8493c42b2a460d5d7de6e8, type: 3}
-      propertyPath: waypointDistance
-      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3190846011903706581, guid: 76a1ccb2bb8493c42b2a460d5d7de6e8, type: 3}
       propertyPath: m_RootOrder
@@ -283,18 +279,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boar
       objectReference: {fileID: 0}
-    - target: {fileID: 4216956574904757266, guid: 76a1ccb2bb8493c42b2a460d5d7de6e8, type: 3}
-      propertyPath: m_FlipX
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4443484205103511720, guid: 76a1ccb2bb8493c42b2a460d5d7de6e8, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 14293702a21f3e640bd10755d985152c, type: 2}
-    - target: {fileID: 5900672002346505359, guid: 76a1ccb2bb8493c42b2a460d5d7de6e8, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 6200000, guid: 098efa6122ccc294b86637c3a18fe2d0, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -430,7 +414,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!1001 &1494785880
+--- !u!1001 &1567267129
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -444,11 +428,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 760592032544756589, guid: dd6bf2b808b32d341932b793ece0c592, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.82
+      value: -4.9903927
       objectReference: {fileID: 0}
     - target: {fileID: 760592032544756589, guid: dd6bf2b808b32d341932b793ece0c592, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.22
+      value: -1.6711776
       objectReference: {fileID: 0}
     - target: {fileID: 760592032544756589, guid: dd6bf2b808b32d341932b793ece0c592, type: 3}
       propertyPath: m_LocalPosition.z
@@ -486,10 +470,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 7664697783973809718, guid: dd6bf2b808b32d341932b793ece0c592, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 6200000, guid: 098efa6122ccc294b86637c3a18fe2d0, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

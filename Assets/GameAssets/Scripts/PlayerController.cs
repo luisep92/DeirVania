@@ -5,119 +5,65 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     Character2DController cController;
-    [SerializeField]
-    private float moveSpeed;
-    [SerializeField]
-    private int jumpdamage;
-    [SerializeField]
-    float hitGodModeDuration;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private int jumpdamage;
+    [SerializeField] float hitGodModeDuration;
     public int AttackDamage;
-    [HideInInspector]
-    public bool canMove= true; //controla cuando puede moverse por si quiero bloquear el personaje
-  //  [SerializeField] 
-   // GameObject attackPoint;
-    [HideInInspector]
-    public bool hasHit=false;
+    [HideInInspector] public bool canMove= true; //controla cuando puede moverse por si quiero bloquear el personaje
+  //  [SerializeField] GameObject attackPoint;
+    [HideInInspector] public bool hasHit=false;
     float horizontal;
     bool isJumping;
     
     Animator anim;
-    Rigidbody2D rigi;
+    Rigidbody2D rb;
     bool godMode;
-   public bool canDoubleJump;
+    public bool canDoubleJump;
     bool canAttack = true;
-     public bool doubleJumpLocked=true;
+    public bool doubleJumpLocked=true;
     
 
-    // Start is called before the first frame update
     void Start()
     {
        // attackPoint.SetActive(false);
         cController = GetComponent<Character2DController>();
         anim = GetComponent<Animator>();
-        rigi = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-       
-        
         horizontal = Input.GetAxisRaw("Horizontal");
-        if (canMove) {anim.SetFloat("Speed", Mathf.Abs(horizontal));
-        }
-        else { anim.SetFloat("Speed", Mathf.Abs(0)); }
-        anim.SetFloat("VelY", rigi.velocity.y);
-        anim.SetBool("IsGrounded", cController.GetIsGround());
+        float speed = canMove ? Mathf.Abs(horizontal) : 0;
 
-        // si esta parado o corriendo , puede atacar
-      /*  if(anim.GetCurrentAnimatorStateInfo(0).IsName("Idle") || anim.GetCurrentAnimatorStateInfo(0).IsName("Run"))
-        {
-            canAttack = true;
-        }*/
+        anim.SetFloat("Speed", Mathf.Abs(horizontal));
+        anim.SetFloat("VelY", rb.velocity.y);
+        anim.SetBool("IsGrounded", cController.IsGrounded);
 
-
-        if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            if (canMove)
-            {
-                Attack();
-            }
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)|| Input.GetKeyDown(KeyCode.UpArrow) && canMove)
-        {
-            
-            {
-
-                if (cController.GetIsGround())
-                {
-                    isJumping = true;
-                    canDoubleJump = true;
-                  //  GameManager.instance.GetComponent<SoundManager>().SoundJump();
-                }
-                else if (canDoubleJump)
-                {
-                    if (!doubleJumpLocked)
-                    {
-                        canDoubleJump = false;
-                        cController.Jump();
-                    }
-                }
-            }
-        }
+        Inputs();
 
         if (godMode)
-        {
             Blink();
-        }
-        else
-        {
-            ChangePlayerAlpha(1);
-        }
-        
-
     }
+
+
+    public void UnlockDoubleJump() => doubleJumpLocked = false;
+
 
     private void FixedUpdate()
-    {//SI PUEDE, SE MUEVE
-        if (canMove)
-        {
-            cController.Move(horizontal * Time.deltaTime * moveSpeed, false, isJumping);
-        }
-        else
-        {
-            cController.Move(0, false, isJumping);
-        }
+    {
+        float quantity = canMove ? horizontal * Time.deltaTime * moveSpeed : 0;
+            cController.Move(quantity, isJumping);
     }
+
 
     public void OnGround()
     {
         isJumping = false;
         canDoubleJump = true;
-
     }
+
 
     private void OnCollisionEnter2D(Collision2D col)
     {
@@ -136,9 +82,10 @@ public class PlayerController : MonoBehaviour
         }*/
     }
 
+
     bool JmpAttack(Vector2 posiEnemy)
     {
-        if (posiEnemy.y < transform.position.y && rigi.velocity.y < 0)
+        if (posiEnemy.y < transform.position.y && rb.velocity.y < 0)
         {
             return true;
         }
@@ -156,17 +103,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     IEnumerator GodModeCorr(float time)
     {
         godMode = true;
         yield return new WaitForSeconds(time);
         godMode = false;
+        ChangePlayerAlpha(1);
     }
+
 
     void Blink()
     {
         ChangePlayerAlpha(Mathf.PingPong(Time.time * 5, 1) + 0.3f);
     }
+
 
     void ChangePlayerAlpha(float value)
     {
@@ -176,38 +127,69 @@ public class PlayerController : MonoBehaviour
         sr.color = myNewColor;
     }
 
+
     public void GetDamage(int damage)
     {
-      /*  if (!godMode)
-        {
-            GameManager.instance.GetComponent<SoundManager>().SoundPlayerGetDamage();
-            GetComponent<Health>().LoseHealth(damage);
-            ActiveGodMode(hitGodModeDuration);
-        }*/
+      /*  if (godMode)
+            return;
+        GameManager.instance.GetComponent<SoundManager>().SoundPlayerGetDamage();
+        GetComponent<Health>().LoseHealth(damage);
+        ActiveGodMode(hitGodModeDuration);*/
     }
 
 
-    void Attack()
+    private void Attack()
     {
-        if (canAttack)
-        {
-            canAttack = false;
-           // GameManager.instance.GetComponent<SoundManager>().SoundPlayerAttack();
-            StartCoroutine(ReloadAttack());
-        }
+        if (!canAttack)
+            return;
+
+        
+        // GameManager.instance.GetComponent<SoundManager>().SoundPlayerAttack();
+        StartCoroutine(ReloadAttack());
     }
+
 
     IEnumerator ReloadAttack()
     {
-         anim.SetTrigger("Attack");
-       
-         yield return new WaitForSeconds(0.3f);
+        canAttack = false;
+        anim.SetTrigger("Attack");
+        yield return new WaitForSeconds(0.3f);
         canAttack = true;
         hasHit = false;
-        
-        
     }
 
-    public void UnlockDoubleJump() { doubleJumpLocked = false; }
 
+    private void Inputs()
+    {
+
+        if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            if (canMove)
+            {
+                Attack();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) && canMove)
+        {
+
+            {
+
+                if (cController.IsGrounded)
+                {
+                    isJumping = true;
+                    canDoubleJump = true;
+                    //  GameManager.instance.GetComponent<SoundManager>().SoundJump();
+                }
+                else if (canDoubleJump)
+                {
+                    if (!doubleJumpLocked)
+                    {
+                        canDoubleJump = false;
+                        cController.Jump();
+                    }
+                }
+            }
+        }
+    }
 }

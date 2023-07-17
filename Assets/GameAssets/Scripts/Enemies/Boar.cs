@@ -7,19 +7,19 @@ public class Boar : Enemy
 {
     const float BOAR_PATROL_SPEED = 1.5f;
     const float BOAR_ATTACK_SPEED = 8f;
-    const float BOAR_SPEED = 600;
+    const float BOAR_SPEED = 1000;
 
     [SerializeField]
     float waypointDistance;
 
-    protected void Awake()
+    protected override void Awake()
     {
         base.Awake();
         speed = BOAR_SPEED;
     }
 
 
-    private void Update()
+    protected override void Update()
     {
         base.Update();
         anim.SetFloat("VelX", VelX);
@@ -54,22 +54,14 @@ public class Boar : Enemy
 
         if(Vector2.Distance(transform.position, nextWaypoint) < 1f)
         {
-            Flip();
             nextWaypoint = GetNextWaypoint();
+            LookAt(GetDirection(nextWaypoint));
         }
 
         if(Vector2.Distance(player.transform.position, transform.position) < 5)
             enemyState = EnemyState.ATTACKING;
     }
     
-
-    private void Flip()
-    {
-        Vector3 aux = transform.localScale;
-        aux.x *= -1;
-        transform.localScale = aux;
-    }
-
     
     protected override void SetWaypoints()
     {

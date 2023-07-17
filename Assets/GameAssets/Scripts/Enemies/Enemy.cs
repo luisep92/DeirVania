@@ -34,7 +34,7 @@ public abstract class Enemy : MonoBehaviour
 
 
 
-    protected void Awake()
+    protected virtual void Awake()
     {
         player = Player.Instance;
         rb = GetComponent<Rigidbody2D>();
@@ -43,7 +43,7 @@ public abstract class Enemy : MonoBehaviour
         nextWaypoint = waypoints[0];
     }
 
-    protected void Update()
+    protected virtual void Update()
     {
         switch (enemyState)
         {
